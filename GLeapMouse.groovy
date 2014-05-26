@@ -36,13 +36,7 @@ class MousePointerListener extends Listener {
     public void onFrame(Controller controller) {
         // Get the most recent frame and report some basic information
         Frame frame = controller.frame();
-        System.out.println("Frame id: " + frame.id()
-                         + ", timestamp: " + frame.timestamp()
-                         + ", hands: " + frame.hands().count()
-                         + ", fingers: " + frame.fingers().count()
-                         + ", tools: " + frame.tools().count()
-                         + ", gestures " + frame.gestures().count());
-
+        
         if (!frame.hands().isEmpty()) {
             // Get the first hand
             Hand hand = frame.hands().get(0);
@@ -56,23 +50,11 @@ class MousePointerListener extends Listener {
                     avgPos = avgPos.plus(finger.tipPosition());
                 }
                 avgPos = avgPos.divide(fingers.count());
-                System.out.println("Hand has " + fingers.count()
-                                 + " fingers, average finger tip position: " + avgPos);
+                println "Hand has " + fingers.count()
+                                 + " fingers, average finger tip position: " + avgPos
                 robot.mouseMove((avgPos.x/150*width+width/2) as int, (height*1.2-avgPos.y/150*height) as int)
             }
 
-            // Get the hand's sphere radius and palm position
-            System.out.println("Hand sphere radius: " + hand.sphereRadius()
-                             + " mm, palm position: " + hand.palmPosition());
-
-            // Get the hand's normal vector and direction
-            Vector normal = hand.palmNormal();
-            Vector direction = hand.direction();
-
-            // Calculate the hand's pitch, roll, and yaw angles
-            System.out.println("Hand pitch: " + Math.toDegrees(direction.pitch()) + " degrees, "
-                             + "roll: " + Math.toDegrees(normal.roll()) + " degrees, "
-                             + "yaw: " + Math.toDegrees(direction.yaw()) + " degrees");
         }
 
         GestureList gestures = frame.gestures();
@@ -80,40 +62,6 @@ class MousePointerListener extends Listener {
             Gesture gesture = gestures.get(i);
 
             switch (gesture.type()) {
-                case Gesture.Type.TYPE_CIRCLE:
-                    CircleGesture circle = new CircleGesture(gesture);
-
-                    // Calculate clock direction using the angle between circle normal and pointable
-                    String clockwiseness;
-                    if (circle.pointable().direction().angleTo(circle.normal()) <= Math.PI/4) {
-                        // Clockwise if angle is less than 90 degrees
-                        clockwiseness = "clockwise";
-                    } else {
-                        clockwiseness = "counterclockwise";
-                    }
-
-                    // Calculate angle swept since last frame
-                    double sweptAngle = 0;
-                    if (circle.state() != State.STATE_START) {
-                        CircleGesture previousUpdate = new CircleGesture(controller.frame(1).gesture(circle.id()));
-                        sweptAngle = (circle.progress() - previousUpdate.progress()) * 2 * Math.PI;
-                    }
-
-                    System.out.println("Circle id: " + circle.id()
-                               + ", " + circle.state()
-                               + ", progress: " + circle.progress()
-                               + ", radius: " + circle.radius()
-                               + ", angle: " + Math.toDegrees(sweptAngle)
-                               + ", " + clockwiseness);
-                    break;
-                case Gesture.Type.TYPE_SWIPE:
-                    SwipeGesture swipe = new SwipeGesture(gesture);
-                    System.out.println("Swipe id: " + swipe.id()
-                               + ", " + swipe.state()
-                               + ", position: " + swipe.position()
-                               + ", direction: " + swipe.direction()
-                               + ", speed: " + swipe.speed());
-                    break;
                 case Gesture.Type.TYPE_SCREEN_TAP:
                     ScreenTapGesture screenTap = new ScreenTapGesture(gesture);
                     System.out.println("Screen Tap id: " + screenTap.id()
@@ -129,7 +77,7 @@ class MousePointerListener extends Listener {
                                + ", position: " + keyTap.position()
                                + ", direction: " + keyTap.direction());
                     robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                
+
                     break;
                 default:
                     System.out.println("Unknown gesture type.");
@@ -151,7 +99,7 @@ Controller controller = new Controller();
 controller.addListener(listener);
 
 // Keep this process running until Enter is pressed
-System.out.println("Press Enter to quit...");
+println "Press Enter to quit...";
 try {
     System.in.read();
 } catch (IOException e) {
