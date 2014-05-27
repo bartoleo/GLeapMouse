@@ -68,7 +68,8 @@ class MousePointerListener extends Listener {
                                + ", " + screenTap.state()
                                + ", position: " + screenTap.position()
                                + ", direction: " + screenTap.direction());
-                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mousePress(InputEvent.BUTTON1_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_MASK);
                     break;
                 case Gesture.Type.TYPE_KEY_TAP:
                     KeyTapGesture keyTap = new KeyTapGesture(gesture);
@@ -76,8 +77,8 @@ class MousePointerListener extends Listener {
                                + ", " + keyTap.state()
                                + ", position: " + keyTap.position()
                                + ", direction: " + keyTap.direction());
-                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-
+                    robot.mousePress(InputEvent.BUTTON1_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_MASK);
                     break;
                 default:
                     System.out.println("Unknown gesture type.");
