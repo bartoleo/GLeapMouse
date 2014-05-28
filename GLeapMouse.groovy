@@ -85,10 +85,6 @@ class MousePointerListener extends Listener {
                     break;
             }
         }
-
-        if (!frame.hands().isEmpty() || !gestures.isEmpty()) {
-            System.out.println();
-        }
     }
 }
 
