@@ -50,8 +50,7 @@ class MousePointerListener extends Listener {
                     avgPos = avgPos.plus(finger.tipPosition());
                 }
                 avgPos = avgPos.divide(fingers.count());
-                println "Hand has " + fingers.count()
-                                 + " fingers, average finger tip position: " + avgPos
+                //println "Hand has " + fingers.count() + " fingers, average finger tip position: " + avgPos
                 robot.mouseMove((avgPos.x/150*width+width/2) as int, (height*1.2-avgPos.y/150*height) as int)
             }
 
