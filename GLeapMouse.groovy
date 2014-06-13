@@ -11,6 +11,7 @@ class MousePointerListener extends Listener {
     GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     int width = gd.getDisplayMode().getWidth();
     int height = gd.getDisplayMode().getHeight();
+    Closure closureOnHands
 
     public void onInit(Controller controller) {
         println "Initialized"
@@ -38,22 +39,9 @@ class MousePointerListener extends Listener {
         Frame frame = controller.frame();
         
         if (!frame.hands().isEmpty()) {
-            // Get the first hand
-            Hand hand = frame.hands().get(0);
-
-            // Check if the hand has any fingers
-            FingerList fingers = hand.fingers();
-            if (!fingers.isEmpty()) {
-                // Calculate the hand's average finger tip position
-                Vector avgPos = Vector.zero();
-                for (Finger finger : fingers) {
-                    avgPos = avgPos.plus(finger.tipPosition());
-                }
-                avgPos = avgPos.divide(fingers.count());
-                //println "Hand has " + fingers.count() + " fingers, average finger tip position: " + avgPos
-                robot.mouseMove((avgPos.x/150*width+width/2) as int, (height*1.2-avgPos.y/150*height) as int)
+            if (clojureOnHands){
+                clojureOnHands(frame.hands())
             }
-
         }
 
         GestureList gestures = frame.gestures();
@@ -85,11 +73,33 @@ class MousePointerListener extends Listener {
             }
         }
     }
+
+    void onHands(Closure closureOnHands){
+        this.closureOnHands = closureOnHands
+    }
+
 }
 
 // Create a sample listener and controller
 MousePointerListener listener = new MousePointerListener();
 Controller controller = new Controller();
+
+listener.onHands{hands->
+    // Get the first hand
+    Hand hand = hands[0]
+    // Check if the hand has any fingers
+    FingerList fingers = hand.fingers();
+    if (!fingers.isEmpty()) {
+        // Calculate the hand's average finger tip position
+        Vector avgPos = Vector.zero();
+        for (Finger finger : fingers) {
+            avgPos = avgPos.plus(finger.tipPosition());
+        }
+        avgPos = avgPos.divide(fingers.count());
+        //println "Hand has " + fingers.count() + " fingers, average finger tip position: " + avgPos
+        robot.mouseMove((avgPos.x/150*width+width/2) as int, (height*1.2-avgPos.y/150*height) as int)
+    }
+}
 
 // Have the sample listener receive events from the controller
 controller.addListener(listener);
